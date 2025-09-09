@@ -1,138 +1,1410 @@
+
 <!DOCTYPE html>
 <html lang="ar-SA" dir="rtl">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="برنامج الجبرني المحاسبي - إدارة مغاسل السيارات" />
-    <meta name="author" content="فريق التطوير" />
-    <title>برنامج الجبرني المحاسبي - إدارة مغاسل السيارات</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>برنامج الجبرني المحاسبي - إدارة مغاسل السيارات</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --fg: #f8fafc;
+    --muted: #cbd5e1;
+    --card: #111827;
+    --accent: #22c55e;
+    --accent-2: #06b6d4;
+    --danger: #ef4444;
+    --warn: #f59e0b;
+    --ok: #10b981;
+    --info: #3b82f6;
+    --line: #1f2937;
+    --card-bg: linear-gradient(180deg, #0b1224, #0e162d);
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
+    /* ألوان للمستخدمين المختلفين */
+    --admin-accent: #10b981;
+    --manager-accent: #3b82f6;
+    --accountant-accent: #f59e0b;
+    --viewer-accent: #8b5cf6;
 
-    <!-- Preload critical resources -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    /* تأثيرات 3D */
+    --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    --btn-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
 
-    <style>
-        /* Loading screen */
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            color: white;
-        }
+  * {
+    box-sizing: border-box;
+    font-family: "Tajawal", system-ui, Segoe UI, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
 
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #22c55e;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #0b1224, #0f172a 50%, #0b1224);
+    background-color: #0f172a;
+    color: var(--fg);
+    min-height: 100vh;
+  }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 
-        .loading-text {
-            font-size: 18px;
-            font-family: 'Tajawal', sans-serif;
-            text-align: center;
-        }
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 16px;
+  }
 
-        .loading-subtext {
-            font-size: 14px;
-            opacity: 0.8;
-            margin-top: 10px;
-        }
-    </style>
+  header.top {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(6px);
+    z-index: 10;
+  }
+
+  header .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand .logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    color: #001b12;
+  }
+
+  .tag {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .btn {
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    background: #1f2937;
+    color: #e5e7eb;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    box-shadow: var(--btn-shadow);
+    transform: translateZ(0);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .btn.info {
+    background: var(--info);
+    color: white;
+  }
+
+  .btn.acc {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #001b12;
+    font-weight: 700;
+  }
+
+  .btn.danger {
+    background: var(--danger);
+    color: white;
+  }
+
+  .btn.warn {
+    background: var(--warn);
+    color: #1f2937;
+  }
+
+  .btn.ghost {
+    background: transparent;
+    border: 1px solid var(--line);
+  }
+
+  .grid {
+    display: grid;
+    gap: 16px;
+  }
+
+  .grid.cards {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    box-shadow: var(--card-shadow);
+    transform: translateZ(0);
+    perspective: 1000px;
+  }
+
+  .card:hover {
+    transform: translateY(-8px) translateZ(0);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 15px 15px rgba(0, 0, 0, 0.25);
+  }
+
+  /* ========= Branch Card Styling ========= */
+  .branch-card {
+    background: linear-gradient(135deg, rgba(74, 144, 226, 0.15), rgba(80, 200, 120, 0.15));
+    border: 2px solid rgba(74, 144, 226, 0.3);
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .branch-card:hover {
+    background: linear-gradient(135deg, rgba(74, 144, 226, 0.25), rgba(80, 200, 120, 0.25));
+    border-color: rgba(74, 144, 226, 0.5);
+    transform: translateY(-10px) scale(1.02);
+  }
+
+  .branch-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .branch-icon {
+    font-size: 52px;
+    background: linear-gradient(45deg, #4A90E2, #50C878);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  }
+
+  .branch-info h3 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .branch-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 15px 0;
+  }
+
+  .branch-detail {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .branch-detail-icon {
+    font-size: 18px;
+    width: 22px;
+    text-align: center;
+    color: rgba(74, 144, 226, 0.8);
+  }
+
+  .branch-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .branch-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #50C878;
+    box-shadow: 0 0 12px rgba(80, 200, 120, 0.6);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 12px rgba(80, 200, 120, 0.6); }
+    50% { box-shadow: 0 0 20px rgba(80, 200, 120, 0.8); }
+    100% { box-shadow: 0 0 12px rgba(80, 200, 120, 0.6); }
+  }
+
+  .branch-arrow {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.7);
+    transition: transform 0.3s ease;
+  }
+
+  .branch-card:hover .branch-arrow {
+    transform: translateX(8px);
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* ========= Enhanced Branch Tabs ========= */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 20px 0;
+    padding: 0;
+  }
+
+  .tab {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 20px 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tab:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .tab:hover::before {
+    transform: translateX(100%);
+  }
+
+  /* ========= Back Button ========= */
+  .back-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, #4A90E2, #50C878);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .back-button:hover {
+    transform: scale(1.1) translateY(-2px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+  }
+
+  .back-button:active {
+    transform: scale(0.95);
+  }
+
+  /* ========= Login Page ========= */
+  #view-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  #view-login .card {
+    max-width: 400px;
+    width: 100%;
+    margin: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* إخفاء القائمة العلوية في صفحة تسجيل الدخول */
+  body:has(#view-login:not(.hidden)) header.top,
+  .view-login header.top {
+    display: none !important;
+  }
+
+  .card h3 {
+    margin: 0 0 8px;
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+
+  .input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #233047;
+    background: #0b1224;
+    color: var(--fg);
+    font-size: 14px;
+  }
+
+  .input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  label {
+    font-size: 13px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
+  }
+
+  .col-12 {
+    grid-column: span 12;
+  }
+  .col-8 {
+    grid-column: span 8;
+  }
+  .col-6 {
+    grid-column: span 6;
+  }
+  .col-4 {
+    grid-column: span 4;
+  }
+  .col-3 {
+    grid-column: span 3;
+  }
+  .col-2 {
+    grid-column: span 2;
+  }
+
+  @media (max-width: 800px) {
+    .col-8,
+    .col-6,
+    .col-4,
+    .col-3,
+    .col-2 {
+      grid-column: span 12;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  th,
+  td {
+    padding: 10px;
+    border-bottom: 1px solid var(--line);
+    text-align: right;
+  }
+
+  th {
+    background: #0b1224;
+    color: #cbd5e1;
+  }
+
+  tr:nth-child(even) {
+    background: #0d1428;
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 10px 0;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .tab {
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .tab:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, #1f2937 0%, #0b1224 100%);
+    border-color: #2b3a56;
+  }
+
+  .pill {
+    padding: 6px 10px;
+    border: 1px dashed #31405f;
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .title {
+    font-size: 22px;
+    margin: 6px 0;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .sep {
+    height: 1px;
+    background: var(--line);
+    margin: 12px 0;
+  }
+
+  /* Login */
+  .login {
+    display: grid;
+    place-items: center;
+    min-height: 70vh;
+    text-align: center;
+  }
+
+  .login .panel {
+    width: min(520px, 92vw);
+    padding: 22px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #0b1224, #0e162d);
+    border: 1px solid var(--line);
+  }
+
+  /* Print */
+  @media print {
+    body {
+      background: white;
+      color: black;
+    }
+    header.top,
+    .no-print {
+      display: none !important;
+    }
+    .card {
+      border: 0;
+    }
+    .report-paper {
+      border: 1px solid #999;
+      padding: 12px;
+    }
+    table,
+    tr,
+    td,
+    th {
+      border: 1px solid #888;
+    }
+  }
+
+  /* Report styles */
+  .report-type-card {
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .report-type-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+  }
+
+  .report-type-card.active {
+    border-color: var(--accent);
+    background: rgba(34, 197, 94, 0.1);
+  }
+
+  .report-separator {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    margin: 24px 0;
+  }
+
+  .report-footer {
+    margin-top: 20px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  .report-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .saved-reports-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .saved-report-item {
+    border-left: 3px solid var(--accent);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .saved-report-item:hover {
+    transform: translateX(4px);
+  }
+
+  .profit-loss-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .profit-loss-table th {
+    background: var(--card);
+    padding: 12px;
+    text-align: center;
+  }
+
+  .profit-loss-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .profit-loss-total {
+    font-weight: bold;
+    background: rgba(16, 185, 129, 0.1);
+  }
+
+  /* Notification */
+  .notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #001b12;
+    font-weight: bold;
+    z-index: 100;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+
+  .notification.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .notification.success {
+    background: var(--accent);
+  }
+
+  .notification.error {
+    background: var(--danger);
+    color: white;
+  }
+
+  .notification.warning {
+    background: var(--warn);
+    color: #1f2937;
+  }
+
+  /* Loading overlay */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.8);
+    display: grid;
+    place-items: center;
+    z-index: 1000;
+  }
+
+  .loading-content {
+    background: var(--card);
+    padding: 24px;
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--accent);
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Branch management */
+  .branch-management {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: var(--card);
+    border-left: 1px solid var(--line);
+    z-index: 50;
+    transition: right 0.3s;
+    padding: 16px;
+    overflow-y: auto;
+  }
+
+  .branch-management.show {
+    right: 0;
+  }
+
+  .branch-management h3 {
+    margin-bottom: 16px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .branch-management {
+      width: 100%;
+      right: -100%;
+    }
+  }
+
+  /* Dashboard Styles */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--card-shadow);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  }
+
+  .stat-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .dashboard-card {
+    margin-bottom: 20px;
+  }
+
+  /* Notification Styles */
+  .notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--danger);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .notification-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 2000;
+    max-width: 350px;
+  }
+
+  .notification {
+    background: var(--card-bg);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: slideIn 0.3s ease-out;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .notification.success {
+    border-left-color: var(--accent);
+  }
+
+  .notification.warning {
+    border-left-color: var(--warn);
+  }
+
+  .notification.error {
+    border-left-color: var(--danger);
+  }
+
+  .notification.info {
+    border-left-color: var(--info);
+  }
+
+  .notification-content {
+    flex: 1;
+    position: relative;
+  }
+
+  .notification-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* Chart Container */
+  .chart-container {
+    width: 100%;
+    height: 300px;
+    margin: 20px 0;
+  }
+
+  /* Backup Section */
+  .backup-section {
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+  }
+
+  .backup-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 14px;
+  }
+
+  .backup-success {
+    color: var(--accent);
+  }
+
+  .backup-error {
+    color: var(--danger);
+  }
+
+  /* Task Styles */
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .task-item:last-child {
+    border-bottom: none;
+  }
+
+  .task-checkbox {
+    margin: 0;
+  }
+
+  .task-completed {
+    opacity: 0.7;
+  }
+
+  /* Animation */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  /* Loading */
+  .loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Financial Reports Styles */
+  .financial-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid var(--line);
+    margin-bottom: 20px;
+  }
+
+  .tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  .tab.active {
+    border-bottom-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .tab:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .report-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    border-bottom: 2px solid var(--line);
+  }
+
+  .report-header h2 {
+    margin: 0 0 10px 0;
+    color: var(--accent);
+  }
+
+  /* Back Button */
+  .back-button {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-bottom: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .back-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--accent);
+    transform: translateX(-2px);
+  }
+
+  /* Modal Styles */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .modal.hidden {
+    display: none;
+  }
+
+  .modal-content {
+    background: var(--bg);
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .modal-header h3 {
+    margin: 0;
+    color: var(--accent);
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-close:hover {
+    color: var(--accent);
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  /* User Role Colors */
+  .user-card.admin {
+    border-left: 4px solid #dc2626;
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(220, 38, 38, 0.05));
+  }
+
+  .user-card.manager {
+    border-left: 4px solid #2563eb;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.05));
+  }
+
+  .user-card.accountant {
+    border-left: 4px solid #059669;
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(5, 150, 105, 0.05));
+  }
+
+  .user-card.employee {
+    border-left: 4px solid #7c3aed;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(124, 58, 237, 0.05));
+  }
+
+  .user-card.viewer {
+    border-left: 4px solid #f59e0b;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+  }
+
+  /* Permission Checkboxes */
+  .permission-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: background 0.3s ease;
+  }
+
+  .permission-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .permission-checkbox {
+    margin-left: 10px;
+    transform: scale(1.2);
+  }
+
+  .permission-label {
+    flex: 1;
+    color: var(--text);
+  }
+
+  /* Theme Colors for Different User Roles */
+  body.theme-admin {
+    --accent: #dc2626;
+    --accent-light: rgba(220, 38, 38, 0.1);
+  }
+
+  body.theme-manager {
+    --accent: #2563eb;
+    --accent-light: rgba(37, 99, 235, 0.1);
+  }
+
+  body.theme-accountant {
+    --accent: #059669;
+    --accent-light: rgba(5, 150, 105, 0.1);
+  }
+
+  body.theme-employee {
+    --accent: #7c3aed;
+    --accent-light: rgba(124, 58, 237, 0.1);
+  }
+
+  body.theme-viewer {
+    --accent: #f59e0b;
+    --accent-light: rgba(245, 158, 11, 0.1);
+  }
+
+  /* Users Grid */
+  .users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .user-card {
+    padding: 20px;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .user-info h4 {
+    margin: 0 0 8px 0;
+    color: var(--text);
+    font-size: 18px;
+  }
+
+  .user-role {
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .user-permissions {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .user-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .user-info-summary {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .user-info-summary h4 {
+    margin: 0 0 8px 0;
+    color: var(--accent);
+  }
+
+  .user-info-summary .user-role {
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .user-branch {
+    color: var(--accent);
+    font-size: 12px;
+    margin-bottom: 4px;
+    font-weight: bold;
+  }
+</style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">جاري تحميل برنامج الجبرني المحاسبي</div>
-        <div class="loading-subtext">يرجى الانتظار...</div>
+<header class="top no-print">
+  <div class="brand">
+    <div class="logo">ج</div>
+    <div>
+      <div><strong>برنامج الجبرني المحاسبي</strong></div>
+      <div class="tag">إدارة حسابات مغاسل السيارات - المملكة العربية السعودية</div>
     </div>
+  </div>
+  <div class="toolbar">
+    <button class="btn ghost" id="btnHome" onclick="Router.go('home')">الرئيسية</button>
+    <button class="btn ghost" id="btnDashboard" onclick="Router.go('dashboard')">لوحة التحكم</button>
+    <button class="btn ghost" id="btnBranchManagement" onclick="Router.go('branch-management')">إدارة الفروع</button>
+    <button class="btn ghost" id="btnMovement" onclick="Router.go('movement')">حركة الفروع</button>
+    <button class="btn ghost" id="btnReports" onclick="Router.go('reports')">التقارير</button>
+    <button class="btn ghost" id="btnFinancialReports" onclick="Router.go('financial-reports')">التقارير المالية</button>
+    <button class="btn ghost" id="btnAccounts" onclick="Router.go('accounts')">مدير الحسابات</button>
+    <button class="btn ghost" id="btnSettings" onclick="Router.go('settings')">الإعدادات</button>
+    <button class="btn warn" id="btnCompany" onclick="Company.open()">بيانات الشركة</button>
+    <span id="userBranchInfo" class="muted" style="margin: 0 10px; display: none;"></span>
+    <button class="btn danger" id="btnLogout" onclick="Auth.logout()">تسجيل الخروج</button>
 
-    <!-- Main Application Container -->
-    <div id="app" style="display: none;">
-        <!-- Application will be loaded here -->
+    <!-- Notification Bell -->
+    <div style="position: relative;">
+      <button class="btn ghost" id="btnNotifications" onclick="Notifications.toggleList()">
+        🔔
+        <span class="notification-badge hidden" id="notificationCount">0</span>
+      </button>
+      <div class="card hidden" id="notificationsList" style="position: absolute; top: 100%; left: 0; width: 300px; z-index: 100; margin-top: 8px;">
+        <h3>الإشعارات</h3>
+        <div id="notificationsContainer"></div>
+      </div>
     </div>
+  </div>
+</header>
 
-    <!-- Error Fallback -->
-    <noscript>
-        <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
-            <h1>خطأ في التحميل</h1>
-            <p>يجب تفعيل JavaScript لتشغيل هذا التطبيق</p>
-            <p>يرجى تفعيل JavaScript في متصفحك وإعادة تحميل الصفحة</p>
+
+
+<!-- Notification -->
+<div id="notification" class="notification"></div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay hidden">
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <div id="loadingText">جاري المعالجة...</div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Welcome / Login -->
+  <section id="view-login" class="login">
+    <div class="panel">
+      <h1 style="margin:8px 0">مرحبًا بكم في برنامج الجبرني المحاسبي</h1>
+      <div class="subtitle">الرجاء اختيار المستخدم لتسجيل الدخول</div>
+      <div class="sep"></div>
+      <div class="row">
+        <div class="col-12">
+          <label>المستخدم</label>
+          <select id="loginUser" onkeydown="Auth.handleLoginEnterKey(event, 'loginPass')"></select>
         </div>
-    </noscript>
+        <div class="col-12">
+          <label>كلمة المرور</label>
+          <input id="loginPass" type="password" class="input" placeholder="••••••" onkeydown="Auth.handleLoginEnterKey(event, 'loginBtn')" />
+        </div>
+      </div>
+      <div class="toolbar" style="justify-content:center">
+        <button id="loginBtn" class="btn acc" onclick="Auth.login()">دخول</button>
+      </div>
+    </div>
+  </section>
 
-    <!-- Load the main application -->
-    <script>
-        // Show loading screen
-        document.getElementById('loading-screen').style.display = 'flex';
+  <!-- Home -->
+  <section id="view-home" class="hidden">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="title">لوحة الفروع</div>
+          <div class="subtitle">اضغط على أي فرع لفتح صفحته التي تحتوي جميع الكشوفات.</div>
+          <div class="pill">بيانات الشركة تظهر في رأس كل تقرير.</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid cards" id="branchesGrid"></div>
+  </section>
 
-        // Load the main application
-        fetch('./Untitled-1.html')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('فشل في تحميل التطبيق');
-                }
-                return response.text();
-            })
-            .then(html => {
-                // Hide loading screen
-                document.getElementById('loading-screen').style.display = 'none';
+  <!-- Dashboard -->
+  <section id="view-dashboard" class="hidden">
+    <div class="card">
+      <div class="title">لوحة التحكم</div>
+      <div class="subtitle">نظرة عامة على أداء النظام والاحصائيات المالية</div>
 
-                // Show main app
-                document.getElementById('app').style.display = 'block';
+      <div class="branch-selector">
+        <label>اختر الفرع:</label>
+        <select id="dashboardBranch" class="input" onchange="Dashboard.load()" onkeydown="Dashboard.handleDashboardEnterKey(event)">
+          <option value="all">جميع الفروع</option>
+        </select>
+      </div>
 
-                // Insert the application content
-                document.getElementById('app').innerHTML = html;
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value" id="total-income">0.00 ر.س</div>
+          <div class="stat-label">إجمالي الإيرادات</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💸</div>
+          <div class="stat-value" id="total-expenses">0.00 ر.س</div>
+          <div class="stat-label">إجمالي المصروفات</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📈</div>
+          <div class="stat-value" id="net-profit">0.00 ر.س</div>
+          <div class="stat-label">صافي الربح</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🚗</div>
+          <div class="stat-value" id="total-cars">0</div>
+          <div class="stat-label">عدد السيارات</div>
+        </div>
+      </div>
 
-                // Execute any scripts in the loaded content
-                const scripts = document.getElementById('app').querySelectorAll('script');
-                scripts.forEach(script => {
-                    if (script.src) {
-                        // External script
-                        const newScript = document.createElement('script');
-                        newScript.src = script.src;
-                        document.head.appendChild(newScript);
-                    } else {
-                        // Inline script
-                        const newScript = document.createElement('script');
-                        newScript.textContent = script.textContent;
-                        document.body.appendChild(newScript);
-                    }
-                });
-            })
-            .catch(error => {
-                console.error('خطأ في تحميل التطبيق:', error);
-                document.getElementById('loading-screen').innerHTML = `
-                    <div style="text-align: center; color: white;">
-                        <h2>خطأ في التحميل</h2>
-                        <p>فشل في تحميل التطبيق</p>
-                        <p>يرجى التحقق من اتصال الإنترنت وإعادة تحميل الصفحة</p>
-                        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                            إعادة المحاولة
-                        </button>
-                    </div>
-                `;
-            });
-    </script>
-</body>
-</html>
+      <!-- Charts Section -->
+      <div class="row">
+        <div class="col-6">
+          <div class="card dashboard-card">
+            <h3>الإيرادات والمصروفات</h3>
+            <div class="chart-container" id="incomeExpenseChart">
+              <canvas id="incomeExpenseChartCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="card dashboard-card">
+            <h3>توزيع المصروفات</h3>
+            <div class="chart-container" id="expensesChart">
+              <canvas id="expensesChartCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="card dashboard-card">
+            <h3>الفروع الأكثر ربحية</h3>
+            <div id="top-branches-list">
+              <div class="muted">جاري تحميل البيانات...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="card dashboard-card">
+            <h3>أحدث الحركات المالية</h3>
+            <div id="recent-transactions">
+              <div class="muted">جاري تحميل البيانات...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card dashboard-card">
+        <h3>التنبيهات المهمة</h3>
+        <div id="important-alerts">
+          <div class="muted">لا توجد تنبيهات حالية</div>
+        </div>
+      </div>
+
+      <!-- Backup Section -->
+      <div class="card dashboard-card">
+        <h3>النسخ الاحتياطي</h3>
+        <div class="backup-section">
+          <p>احفظ نسخة احتياطية من جميع بيانات النظام لتجنب فقدان البيانات.</p>
+          <div class="toolbar">
+            <button class="btn acc" onclick="Backup.createBackup()">إنشاء نسخة احتياطية</button>
+            <button class="btn info" onclick="Backup.restoreBackup()">استعادة نسخة</button>
+            <button class="btn" onclick="Backup.downloadTemplate()">تحميل قالب البيانات</button>
