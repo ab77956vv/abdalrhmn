@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar-SA" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="برنامج الجبرني المحاسبي - إدارة مغاسل السيارات" />
+    <meta name="author" content="فريق التطوير" />
+    <title>برنامج الجبرني المحاسبي - إدارة مغاسل السيارات</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
+
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+    <style>
+        /* Loading screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #22c55e;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 18px;
+            font-family: 'Tajawal', sans-serif;
+            text-align: center;
+        }
+
+        .loading-subtext {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري تحميل برنامج الجبرني المحاسبي</div>
+        <div class="loading-subtext">يرجى الانتظار...</div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div id="app" style="display: none;">
+        <!-- Application will be loaded here -->
+    </div>
+
+    <!-- Error Fallback -->
+    <noscript>
+        <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+            <h1>خطأ في التحميل</h1>
+            <p>يجب تفعيل JavaScript لتشغيل هذا التطبيق</p>
+            <p>يرجى تفعيل JavaScript في متصفحك وإعادة تحميل الصفحة</p>
+        </div>
+    </noscript>
+
+    <!-- Load the main application -->
+    <script>
+        // Show loading screen
+        document.getElementById('loading-screen').style.display = 'flex';
+
+        // Load the main application
+        fetch('./Untitled-1.html')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('فشل في تحميل التطبيق');
+                }
+                return response.text();
+            })
+            .then(html => {
+                // Hide loading screen
+                document.getElementById('loading-screen').style.display = 'none';
+
+                // Show main app
+                document.getElementById('app').style.display = 'block';
+
+                // Insert the application content
+                document.getElementById('app').innerHTML = html;
+
+                // Execute any scripts in the loaded content
+                const scripts = document.getElementById('app').querySelectorAll('script');
+                scripts.forEach(script => {
+                    if (script.src) {
+                        // External script
+                        const newScript = document.createElement('script');
+                        newScript.src = script.src;
+                        document.head.appendChild(newScript);
+                    } else {
+                        // Inline script
+                        const newScript = document.createElement('script');
+                        newScript.textContent = script.textContent;
+                        document.body.appendChild(newScript);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('خطأ في تحميل التطبيق:', error);
+                document.getElementById('loading-screen').innerHTML = `
+                    <div style="text-align: center; color: white;">
+                        <h2>خطأ في التحميل</h2>
+                        <p>فشل في تحميل التطبيق</p>
+                        <p>يرجى التحقق من اتصال الإنترنت وإعادة تحميل الصفحة</p>
+                        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            إعادة المحاولة
+                        </button>
+                    </div>
+                `;
+            });
+    </script>
+</body>
+</html>
